@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Cicada3301: Agentic Last-Mile Coordinator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Neutrals with Tech Blue Accent -->
+    <!-- Application Structure Plan: A single-page, scroll-based narrative structure is used to guide the user (e.g., a hackathon judge) through the project story logically. It starts with the high-level problem and vision, then dives into the technical architecture with interactive diagrams. The core of the app is the "Agent in Action" section, which provides an animated, step-by-step simulation of the agent's reasoning process for different scenarios. This is more engaging than static text and directly addresses the hackathon's "show your work" requirement. The structure concludes with the strategic vision and roadmap, presented as an interactive timeline. This flow was chosen to build understanding progressively, from the "what" and "why" to the "how" and "what's next," ensuring the solution's depth and foresight are clearly communicated. -->
+    <!-- Visualization & Content Choices: 
+        - Last-Mile Market Growth: (Report Info: Market size projection) -> (Goal: Show market opportunity) -> (Viz: Bar Chart) -> (Interaction: Hover for details) -> (Justification: Quantifies the problem's importance visually) -> (Library: Chart.js).
+        - ReAct Framework: (Report Info: Thought-Action-Observation loop) -> (Goal: Explain core AI logic) -> (Viz: HTML/CSS Diagram) -> (Interaction: Hover to highlight stages) -> (Justification: Simplifies a complex AI concept into a digestible visual) -> (Method: Tailwind CSS).
+        - LangGraph Architecture: (Report Info: Cyclical vs. linear workflows) -> (Goal: Justify tech stack choice) -> (Viz: Side-by-side HTML/CSS diagrams) -> (Interaction: Hover highlights the key cyclical advantage) -> (Justification: Visual comparison is faster than text for technical differentiation) -> (Method: Tailwind CSS).
+        - Interactive Scenarios: (Report Info: Step-by-step resolution flows) -> (Goal: Demonstrate agent's capability) -> (Viz: Animated, step-by-step log) -> (Interaction: User selects scenario, animation plays) -> (Justification: The "wow" factor; brings the agent's "chain of thought" to life, making it tangible and impressive) -> (Method: Vanilla JS + Tailwind CSS).
+        - Strategic Roadmap: (Report Info: 3-phase evolution) -> (Goal: Showcase long-term vision) -> (Viz: Interactive horizontal timeline) -> (Interaction: Click to expand phase details) -> (Justification: An intuitive and professional way to present future plans) -> (Method: HTML/CSS + JS).
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 300px; max-height: 400px; }
+        @media (min-width: 768px) { .chart-container { height: 350px; } }
+        .step-item { transition: all 0.5s ease-in-out; }
+        .timeline-item::before { content: ''; position: absolute; top: 11px; left: -20px; width: 9px; height: 9px; background-color: #3b82f6; border-radius: 50%; z-index: 1; }
+        .timeline-line { position: absolute; top: 15px; left: -16px; width: 1px; height: calc(100% - 15px); background-color: #d1d5db; }
+        .tech-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+        .nav-link { transition: color 0.2s; }
+        .nav-link:hover { color: #2563eb; }
+        .active-nav { color: #2563eb; font-weight: 600; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-slate-200">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-bold text-xl text-blue-600">Team Cicada3301</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#problem" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600">The Problem</a>
+                        <a href="#solution" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600">The Solution</a>
+                        <a href="#scenarios" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600">In Action</a>
+                        <a href="#roadmap" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600">Roadmap</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero" class="py-20 md:py-32 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900">
+                    The Autonomous Nervous System for <span class="text-blue-600">Last-Mile Logistics</span>
+                </h1>
+                <p class="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-slate-600">
+                    Introducing the Synapse Agent: An intelligent, autonomous coordinator that reasons, acts, and resolves real-time delivery disruptions, transforming your logistics network into a resilient, self-healing ecosystem.
+                </p>
+                <div class="mt-8">
+                    <a href="#scenarios" class="inline-block bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300">
+                        See The Agent in Action
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="problem" class="py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Efficiency's Final Frontier: The Last-Mile Paradox</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">
+                        The last mile is the most complex and costly part of delivery. While the market for autonomous solutions is booming, existing systems fail because they are rigid and rule-based. They can't handle the chaos of reality—traffic jams, busy restaurants, or unavailable customers. This isn't just an optimization problem; it's a cognitive one.
+                    </p>
+                </div>
+                <div class="mt-16 grid md:grid-cols-2 gap-8 items-center">
+                    <div class="space-y-8">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 h-12 w-12 rounded-lg bg-blue-500 text-white flex items-center justify-center font-bold text-xl">1</div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-bold">Unpredictable Disruptions</h3>
+                                <p class="mt-1 text-slate-600">Real-world issues demand dynamic reasoning, not static rules. Human intervention creates bottlenecks, increasing costs and frustrating customers.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 h-12 w-12 rounded-lg bg-blue-500 text-white flex items-center justify-center font-bold text-xl">2</div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-bold">A Cognitive Challenge</h3>
+                                <p class="mt-1 text-slate-600">The solution isn't a better routing algorithm. It's an AI that can understand context, reason about implications, and formulate a novel plan.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="marketChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="solution" class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">The Synapse Agent: A New Cognitive Architecture</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">
+                        Our solution is a dynamic AI agent built on a powerful, production-ready foundation. We combine two cutting-edge frameworks to create an agent that is transparent, resilient, and adaptable. This section explains how our agent thinks and acts.
+                    </p>
+                </div>
+                <div class="mt-16 grid md:grid-cols-2 gap-x-12 gap-y-16">
+                    <div class="tech-card p-8 rounded-xl border border-slate-200 bg-slate-50/50 transition-all duration-300">
+                        <h3 class="text-2xl font-bold text-slate-900">The Cognitive Engine: ReAct</h3>
+                        <p class="mt-2 text-slate-600">For transparent reasoning, we use the ReAct (Reason+Act) framework. It mimics human problem-solving by iterating through a cycle of thought, action, and observation, ensuring every decision is explainable and grounded in real-world data.</p>
+                        <div id="react-diagram" class="mt-6 flex flex-col sm:flex-row justify-around items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                            <div class="react-step text-center p-3 rounded-lg" data-title="Thought">
+                                <div class="text-4xl">🤔</div>
+                                <div class="font-semibold mt-1">Thought</div>
+                                <div class="text-xs text-slate-500">Analyze & Plan</div>
+                            </div>
+                            <div class="text-2xl font-mono text-slate-400">&rarr;</div>
+                            <div class="react-step text-center p-3 rounded-lg" data-title="Action">
+                                <div class="text-4xl">🛠️</div>
+                                <div class="font-semibold mt-1">Action</div>
+                                <div class="text-xs text-slate-500">Use a Tool</div>
+                            </div>
+                            <div class="text-2xl font-mono text-slate-400">&rarr;</div>
+                             <div class="react-step text-center p-3 rounded-lg" data-title="Observation">
+                                <div class="text-4xl">👀</div>
+                                <div class="font-semibold mt-1">Observation</div>
+                                <div class="text-xs text-slate-500">Get New Info</div>
+                            </div>
+                        </div>
+                        <div id="react-tooltip" class="mt-4 text-center text-sm text-blue-600 font-medium h-5"></div>
+                    </div>
+                    <div class="tech-card p-8 rounded-xl border border-slate-200 bg-slate-50/50 transition-all duration-300">
+                        <h3 class="text-2xl font-bold text-slate-900">The Orchestration Layer: LangGraph</h3>
+                        <p class="mt-2 text-slate-600">Logistics problems aren't linear. We use LangGraph because it supports cycles and stateful workflows, allowing the agent to loop, retry, and adapt—critical for resolving complex, real-world disruptions.</p>
+                        <div class="mt-6 grid grid-cols-2 gap-4 items-center text-center">
+                            <div>
+                                <p class="font-semibold">Typical (Linear)</p>
+                                <div class="mt-2 p-2 border border-dashed border-red-400 rounded-lg">
+                                    <span class="font-mono text-sm">A &rarr; B &rarr; C</span>
+                                    <p class="text-xs text-red-600 mt-1">Fails if C is wrong</p>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-blue-600">LangGraph (Cyclical)</p>
+                                <div class="mt-2 p-2 border border-solid border-blue-500 bg-blue-50 rounded-lg">
+                                    <span class="font-mono text-sm">A &rarr; B &harr; C</span>
+                                    <p class="text-xs text-blue-700 mt-1">Can loop to self-correct</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="scenarios" class="py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">The Agent in Action</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">
+                        Theory is one thing, but performance is everything. This interactive simulation demonstrates the agent's "chain of thought" as it autonomously resolves complex, real-world delivery disruptions. Select a scenario to see how it works.
+                    </p>
+                </div>
+
+                <div class="mt-12 max-w-4xl mx-auto">
+                    <div class="flex justify-center space-x-2 sm:space-x-4 rounded-xl bg-slate-200 p-1">
+                        <button data-scenario="restaurant" class="scenario-btn w-full px-3 py-2 text-sm sm:text-base font-semibold rounded-lg">Overloaded Restaurant</button>
+                        <button data-scenario="dispute" class="scenario-btn w-full px-3 py-2 text-sm sm:text-base font-semibold rounded-lg">Damaged Package</button>
+                        <button data-scenario="recipient" class="scenario-btn w-full px-3 py-2 text-sm sm:text-base font-semibold rounded-lg">Recipient Unavailable</button>
+                    </div>
+
+                    <div id="scenario-display" class="mt-8 bg-slate-900 rounded-xl shadow-2xl p-4 sm:p-6 min-h-[300px] text-white font-mono text-sm">
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-700">
+                            <div class="flex items-center space-x-2">
+                                <span class="h-3 w-3 rounded-full bg-red-500"></span>
+                                <span class="h-3 w-3 rounded-full bg-yellow-500"></span>
+                                <span class="h-3 w-3 rounded-full bg-green-500"></span>
+                            </div>
+                            <p id="scenario-title" class="text-slate-400">Select a scenario to begin...</p>
+                        </div>
+                        <div id="scenario-steps" class="mt-4 space-y-3 overflow-y-auto max-h-[400px]">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="roadmap" class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Strategic Roadmap</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">
+                        This hackathon project is the first step. We have a clear vision to evolve the Synapse Agent from a reactive coordinator into a proactive, predictive conductor of the entire logistics network.
+                    </p>
+                </div>
+                <div class="mt-16 max-w-3xl mx-auto">
+                    <div class="relative pl-8">
+                        <div class="timeline-item relative pb-12">
+                            <div class="timeline-line"></div>
+                            <h3 class="text-xl font-bold">Phase 1: The Agentic Coordinator</h3>
+                            <p class="text-slate-500 font-medium">Hackathon & Initial Deployment</p>
+                            <p class="mt-2 text-slate-600">Deploy the agent to reactively handle real-time exceptions like overloaded merchants and traffic incidents. The core value is operational efficiency and improved user experience during service failures.</p>
+                        </div>
+                        <div class="timeline-item relative pb-12">
+                            <div class="timeline-line"></div>
+                            <h3 class="text-xl font-bold">Phase 2: The Proactive & Predictive Agent</h3>
+                            <p class="text-slate-500 font-medium">Expansion</p>
+                            <p class="mt-2 text-slate-600">Integrate more data sources (weather, local events) to anticipate problems. The agent will move from fixing issues to preventing them, with features like hyperlocal demand forecasting and predictive vehicle maintenance.</p>
+                        </div>
+                        <div class="timeline-item relative">
+                            <h3 class="text-xl font-bold">Phase 3: The Multi-Agent System</h3>
+                            <p class="text-slate-500 font-medium">Full Autonomy</p>
+                            <p class="mt-2 text-slate-600">Evolve into a collaborative ecosystem of specialized agents (e.g., Procurement, Fleet Management) orchestrated by Synapse. This achieves a level of intelligence and efficiency currently unattainable.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="bg-slate-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="font-bold text-lg">Team Cicada3301</p>
+            <p class="mt-2 text-sm text-slate-400">A Hackathon Submission | August 2025</p>
+        </div>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    const marketChartCanvas = document.getElementById('marketChart');
+    if (marketChartCanvas) {
+        new Chart(marketChartCanvas, {
+            type: 'bar',
+            data: {
+                labels: ['2023', '2030 (Projected)'],
+                datasets: [{
+                    label: 'Global Autonomous Last-Mile Delivery Market',
+                    data: [0.9, 4.2],
+                    backgroundColor: ['rgba(59, 130, 246, 0.5)', 'rgba(59, 130, 246, 0.8)'],
+                    borderColor: ['rgb(59, 130, 246)', 'rgb(59, 130, 246)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Market Size ($ Billions)' }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Market Size: $${context.raw} Billion`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    const reactDiagram = document.getElementById('react-diagram');
+    const reactTooltip = document.getElementById('react-tooltip');
+    if (reactDiagram && reactTooltip) {
+        const steps = reactDiagram.querySelectorAll('.react-step');
+        const tooltips = {
+            'Thought': 'Agent analyzes the problem and formulates a plan.',
+            'Action': 'Agent decides which tool to use from its toolkit.',
+            'Observation': 'Agent gets new information from the tool\'s output.'
+        };
+
+        steps.forEach(step => {
+            step.addEventListener('mouseover', () => {
+                const title = step.dataset.title;
+                reactTooltip.textContent = tooltips[title];
+                step.classList.add('bg-blue-100');
+            });
+            step.addEventListener('mouseout', () => {
+                reactTooltip.textContent = '';
+                step.classList.remove('bg-blue-100');
+            });
+        });
+    }
+
+    const scenarioButtons = document.querySelectorAll('.scenario-btn');
+    const scenarioDisplay = document.getElementById('scenario-steps');
+    const scenarioTitle = document.getElementById('scenario-title');
+    let activeScenarioButton = null;
+
+    const scenarios = {
+        restaurant: {
+            title: "Resolving: Overloaded Restaurant",
+            steps: [
+                { type: 'trigger', text: 'New order received for merchant "GF123".' },
+                { type: 'action', text: 'CALL get_merchant_status(merchant_id="GF123")' },
+                { type: 'observation', text: 'OBSERVED prep_time: 40 mins, is_overloaded: true' },
+                { type: 'thought', text: 'THOUGHT: Delay is unacceptable. Must notify customer and optimize driver time.' },
+                { type: 'action', text: 'PARALLEL CALL notify_customer(...) & re_route_driver(...)' },
+                { type: 'observation', text: 'OBSERVED customer choice: "Wait", driver status: "rerouted"' },
+                { type: 'thought', text: 'THOUGHT: Crisis averted. Order state updated. Workflow will resume on trigger.' },
+                { type: 'complete', text: 'RESOLUTION: Customer informed, driver time optimized. Mission success.' }
+            ]
+        },
+        dispute: {
+            title: "Resolving: Damaged Packaging Dispute",
+            steps: [
+                { type: 'trigger', text: 'At-the-door resolution triggered for order "ORD111".' },
+                { type: 'thought', text: 'THOUGHT: Real-time dispute. Goal is fair, evidence-based mediation.' },
+                { type: 'action', text: 'CALL initiate_mediation_flow(order_id="ORD111")' },
+                { type: 'observation', text: 'OBSERVED mediation_session_id: "MEDSESS_222", status: "active"' },
+                { type: 'thought', text: 'THOUGHT: Channel active. Must collect evidence from both parties.' },
+                { type: 'action', text: 'PARALLEL CALL collect_evidence(customer, photo) & collect_evidence(driver, text)' },
+                { type: 'observation', text: 'OBSERVED Evidence received from both parties.' },
+                { type: 'action', text: 'CALL analyze_evidence(...)' },
+                { type: 'observation', text: 'OBSERVED fault_assessment: "merchant", confidence: 0.95' },
+                { type: 'thought', text: 'THOUGHT: Merchant fault confirmed. Plan: refund, exonerate, log feedback.' },
+                { type: 'action', text: 'PARALLEL CALL issue_refund, exonerate_driver, log_feedback' },
+                { type: 'complete', text: 'RESOLUTION: Dispute solved instantly. Customer, driver, and platform win.' }
+            ]
+        },
+        recipient: {
+            title: "Resolving: Recipient Unavailable",
+            steps: [
+                { type: 'trigger', text: 'Driver arrives at destination, recipient is unavailable.' },
+                { type: 'thought', text: 'THOUGHT: Package is valuable. Must securely coordinate alternative drop-off.' },
+                { type: 'action', text: 'CALL contact_recipient_via_chat(...)' },
+                { type: 'observation', text: 'OBSERVED User response: "I am not home. What are the options?"' },
+                { type: 'thought', text: 'THOUGHT: User is responsive. I will suggest secure, nearby options.' },
+                { type: 'action', text: 'CALL find_nearby_locker(location, package_size)' },
+                { type: 'observation', text: 'OBSERVED Available locker at "LockerCo1", 200m away.' },
+                { type: 'action', text: 'CALL notify_customer(message="Leave at secure locker LockerCo1?", options=[Yes, No])' },
+                { type: 'observation', text: 'OBSERVED User choice: "Yes"' },
+                { type: 'thought', text: 'THOUGHT: Customer confirmed locker drop-off. I will update the driver.' },
+                { type: 'action', text: 'CALL re_route_driver(driver_id, new_task="Drop at LockerCo1")' },
+                { type: 'complete', text: 'RESOLUTION: Secure alternative delivery arranged. Package safe, customer happy.' }
+            ]
+        }
+    };
+
+    function typeStep(step, index) {
+        setTimeout(() => {
+            const el = document.createElement('div');
+            el.className = 'step-item opacity-0 transform -translate-y-2';
+            
+            let icon = '';
+            let color = 'text-slate-300';
+            if (step.type === 'thought') { icon = '🤔'; color = 'text-purple-400'; }
+            if (step.type === 'action') { icon = '🛠️'; color = 'text-cyan-400'; }
+            if (step.type === 'observation') { icon = '👀'; color = 'text-yellow-400'; }
+            if (step.type === 'trigger') { icon = '⚡'; color = 'text-orange-400'; }
+            if (step.type === 'complete') { icon = '✅'; color = 'text-green-400'; }
+
+            el.innerHTML = `<span class="mr-2">${icon}</span><span class="${color}">${step.text}</span>`;
+            scenarioDisplay.appendChild(el);
+            
+            setTimeout(() => {
+                el.classList.remove('opacity-0', '-translate-y-2');
+                scenarioDisplay.scrollTop = scenarioDisplay.scrollHeight;
+            }, 50);
+
+        }, index * 800);
+    }
+    
+    scenarioButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            if (activeScenarioButton) {
+                activeScenarioButton.classList.remove('bg-blue-600', 'text-white');
+                activeScenarioButton.classList.add('text-slate-700');
+            }
+            button.classList.add('bg-blue-600', 'text-white');
+            button.classList.remove('text-slate-700');
+            activeScenarioButton = button;
+            
+            const scenarioKey = button.dataset.scenario;
+            const scenario = scenarios[scenarioKey];
+            
+            scenarioTitle.textContent = scenario.title;
+            scenarioDisplay.innerHTML = '';
+            
+            scenario.steps.forEach((step, index) => {
+                typeStep(step, index);
+            });
+        });
+    });
+
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('main section');
+
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.4
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                navLinks.forEach(link => {
+                    link.classList.remove('active-nav');
+                    if (link.getAttribute('href').substring(1) === entry.target.id) {
+                        link.classList.add('active-nav');
+                    }
+                });
+            }
+        });
+    }, observerOptions);
+
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+
+    if (scenarioButtons.length > 0) {
+        scenarioButtons[0].click();
+    }
+
+});
+</script>
+
+</body>
+</html>
